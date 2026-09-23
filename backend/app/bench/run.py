@@ -4,6 +4,7 @@ training on every request (that's how real benchmarks work -- run once,
 publish results)."""
 
 import json
+import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,7 +14,12 @@ from ..deciders import classifier, jev_decider, rule_based
 from ..providers import get_provider
 from .. import config
 
-RESULTS_PATH = Path(__file__).parent.parent.parent / "results" / "benchmark_results.json"
+_COMMITTED_RESULTS_PATH = Path(__file__).parent.parent.parent / "results" / "benchmark_results.json"
+# Vercel's filesystem is read-only outside /tmp. The committed results file
+# still ships in the deployment for reference, but /rerun and cold-start
+# regeneration write to /tmp there instead -- ephemeral per instance, which
+# is fine for a demo "rerun and see it update" button.
+RESULTS_PATH = Path("/tmp/benchmark_results.json") if os.environ.get("VERCEL") else _COMMITTED_RESULTS_PATH
 LEARNING_CURVE_SIZES = [10, 20, 40, 80, 160]
 CONSISTENCY_RUNS = 3
 

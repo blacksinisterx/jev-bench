@@ -92,7 +92,11 @@ Covers: the dataset has no train/test group leakage (the regression test for the
 
 ## Deployment
 
-Same shape as the rest of the series: Vite static build for the frontend, FastAPI as Vercel Python serverless functions for the backend. `results/benchmark_results.json` is committed (not regenerated on every cold start) since scikit-learn training on every request isn't something a serverless function should do — `POST /rerun` exists for on-demand regeneration.
+Deploys as a single Vercel project — import this repo, no configuration needed. `vercel.json` builds the Vite frontend as the static site and auto-detects `api/index.py` as a Python serverless function; `api/index.py` mounts the existing FastAPI app under `/api` with zero route changes.
+
+Two things specific to this project's deployment, both already handled:
+- **Init runs at import time**, not via `@app.on_event("startup")`. Mounting this app as a sub-app (required for the `api/index.py` wrapper above) doesn't reliably propagate ASGI lifespan events through Starlette's `Mount` — a startup-event hook would silently never fire once mounted, breaking `/predict` and `/results` on first load. Caught by testing the actual mounted wrapper locally before deploying, not just the standalone app.
+- **Results path is `/tmp` on Vercel**, not the committed `results/benchmark_results.json` — Vercel's filesystem is read-only outside `/tmp`. `backend/app/bench/run.py` detects the `VERCEL` env var (set automatically by Vercel) and switches paths accordingly, so `POST /rerun` and cold-start regeneration actually succeed in production. The committed results file still ships for local dev / reference; production output is regenerated fresh per cold start (~0.02–0.1s, not something to worry about at these dataset sizes) and ephemeral per instance, which is fine for a demo "rerun and see it update" button.
 
 ## Screenshots
 

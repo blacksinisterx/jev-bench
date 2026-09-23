@@ -23,14 +23,21 @@ app.add_middleware(
 _state: dict = {"pipeline": None, "provider": None}
 
 
-@app.on_event("startup")
-def _startup() -> None:
+def _init() -> None:
     if not RESULTS_PATH.exists():
         run()
     dataset = build_dataset(per_bucket=35)
     train, _ = train_test_split(dataset, test_fraction=0.3)
     _state["pipeline"] = classifier.train(train)
     _state["provider"] = get_provider(config.JEV_PROVIDER)
+
+
+# Run at import time rather than as an @app.on_event("startup") hook --
+# when this app is mounted as a sub-app (e.g. api/index.py for Vercel),
+# ASGI lifespan events aren't reliably propagated through Starlette's
+# Mount to the mounted app's own startup handlers. Import-time init works
+# identically whether run directly, under TestClient, or mounted.
+_init()
 
 
 class PredictRequest(BaseModel):
