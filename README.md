@@ -92,7 +92,7 @@ Covers: the dataset has no train/test group leakage (the regression test for the
 
 ## Deployment
 
-Deploys as a single Vercel project — import this repo, no configuration needed. `vercel.json` builds the Vite frontend as the static site and auto-detects `api/index.py` as a Python serverless function; `api/index.py` mounts the existing FastAPI app under `/api` with zero route changes.
+Deploys as a single Vercel project — import this repo, no configuration needed. `vercel.json` uses Vercel's explicit `builds`/`routes` config (more reliable for mixing a static build with a Python function than the buildCommand/outputDirectory zero-config style, which in practice let requests fall through to the API function instead of the static site): it builds the Vite frontend as the static site, deploys `api/index.py` as a Python function with `includeFiles: "backend/**"` (needed since the function imports from the sibling `backend/` directory, which Vercel doesn't bundle automatically otherwise), and routes `/api/*` to the function with everything else falling through to the static file system first, then `index.html`. `api/index.py` mounts the existing FastAPI app under `/api` with zero route changes.
 
 Two things specific to this project's deployment, both already handled:
 - **Init runs at import time**, not via `@app.on_event("startup")`. Mounting this app as a sub-app (required for the `api/index.py` wrapper above) doesn't reliably propagate ASGI lifespan events through Starlette's `Mount` — a startup-event hook would silently never fire once mounted, breaking `/predict` and `/results` on first load. Caught by testing the actual mounted wrapper locally before deploying, not just the standalone app.
