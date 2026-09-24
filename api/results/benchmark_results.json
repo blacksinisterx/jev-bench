@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-09-23T22:55:19.461475+00:00",
+  "provider": "mock",
+  "dataset": {
+    "total": 210,
+    "train": 147,
+    "test": 63
+  },
+  "deciders": {
+    "rule_based": {
+      "overall": 0.6032,
+      "direct": 1.0,
+      "paraphrased": 0.2857,
+      "avg_latency_ms": 0.0125,
+      "total_cost_usd": 0.0,
+      "consistency": 1.0,
+      "setup": {
+        "labeled_examples_required": 0,
+        "training_time_s": 0.0
+      }
+    },
+    "jev": {
+      "overall": 0.7143,
+      "direct": 1.0,
+      "paraphrased": 0.4857,
+      "avg_latency_ms": 0.0174,
+      "total_cost_usd": 0.0,
+      "consistency": 1.0,
+      "setup": {
+        "labeled_examples_required": 0,
+        "training_time_s": 0.0
+      }
+    },
+    "classifier": {
+      "overall": 0.746,
+      "direct": 0.8929,
+      "paraphrased": 0.6286,
+      "avg_latency_ms": 0.3625,
+      "total_cost_usd": 0.0,
+      "consistency": 1.0,
+      "setup": {
+        "labeled_examples_required": 147,
+        "training_time_s": 0.0461
+      }
+    }
+  },
+  "learning_curve": [
+    {
+      "train_size": 10,
+      "accuracy": 0.4286
+    },
+    {
+      "train_size": 20,
+      "accuracy": 0.5556
+    },
+    {
+      "train_size": 40,
+      "accuracy": 0.5873
+    },
+    {
+      "train_size": 80,
+      "accuracy": 0.7619
+    },
+    {
+      "train_size": 147,
+      "accuracy": 0.746
+    }
+  ],
+  "reference_lines": {
+    "rule_based_accuracy": 0.6032,
+    "jev_accuracy": 0.7143
+  }
+}
