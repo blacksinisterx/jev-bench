@@ -114,6 +114,10 @@ Several things that took a few iterations to get right, worth knowing if you for
 
 ![Try it yourself panel showing decider disagreement](docs/try-it-yourself.png)
 
+**Live Jev output** — same phrase, `JEV_PROVIDER=jev_agent` against the real API instead of the mock: the rule-based decider still misses it (`allow`), but real Jev correctly calls it `block` (the mock provider only manages `review`, partial credit):
+
+![Dashboard with a live jev_agent prediction result](docs/try-it-yourself-live.png)
+
 ## Limitations
 
 - **Labels are synthetic, not human-annotated.** Every example's ground truth was assigned by the template it was generated from. This is standard practice for a demo benchmark, but it's not the same rigor as a human-labeled dataset — don't read the exact accuracy numbers as claims about real-world performance, read the *shape* of the comparison (where each approach fails, and the crossover point) as the finding.
